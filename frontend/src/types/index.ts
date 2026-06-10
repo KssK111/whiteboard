@@ -19,9 +19,6 @@ export interface RectElement extends BaseElement {
 	y: number
 	width: number
 	height: number
-
-	startX: number
-	startY: number
 }
 
 export interface EllipseElement extends BaseElement {

@@ -1,8 +1,13 @@
-import { Layer, Line, Stage } from "react-konva";
+import { Layer, Stage } from "react-konva";
 import type { Tool, WhiteboardElement, PenElement, BaseElement, RectElement } from "../../types";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { KonvaEventObject } from "konva/lib/Node";
 import RenderElement from "./WBElementRenderer";
+
+interface Point {
+	x: number
+	y: number
+}
 
 interface Props {
   tool: Tool
@@ -13,6 +18,7 @@ interface Props {
 function WhiteboardCanvas(props: Props) {
 	const [elements, setElements] = useState<WhiteboardElement[]>([])
 	const [currentElement, setCurrentElement] = useState<WhiteboardElement | null>(null)
+	const startPos = useRef<Point | null>(null)
 
 	const handleMouseDown = (e: KonvaEventObject<MouseEvent>) => {
 		const pos = (
@@ -48,10 +54,8 @@ function WhiteboardCanvas(props: Props) {
 					y: pos.y,
 					width: 0,
 					height: 0,
-
-					startX: pos.x,
-					startY: pos.y
 				};
+				startPos.current = pos
 				element = rect_element
 				break;
 
@@ -65,6 +69,7 @@ function WhiteboardCanvas(props: Props) {
 	const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
 		if (!currentElement)
 			return
+		const start = startPos.current!;
 
 		const pos = (
 			e.target
@@ -85,10 +90,10 @@ function WhiteboardCanvas(props: Props) {
 			case "rect":
 				updatedElem = {
 					...currentElement,
-					x: Math.min(currentElement.startX, pos.x),
-					y: Math.min(currentElement.startY, pos.y),
-					width: Math.abs(currentElement.startX - pos.x),
-					height: Math.abs(currentElement.startY - pos.y),
+					x: Math.min(start.x, pos.x),
+					y: Math.min(start.y, pos.y),
+					width: Math.abs(start.x - pos.x),
+					height: Math.abs(start.y - pos.y),
 				};
 				break
 
@@ -99,9 +104,11 @@ function WhiteboardCanvas(props: Props) {
 		setCurrentElement(updatedElem)
 	};
 
-	const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
+	const handleMouseUp = (_e: KonvaEventObject<MouseEvent>) => {
 		if (!currentElement)
 			return
+
+		startPos.current = null
 
 		setElements([...elements, currentElement])
 		setCurrentElement(null)
