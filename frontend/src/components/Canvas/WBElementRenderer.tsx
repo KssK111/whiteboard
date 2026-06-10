@@ -1,4 +1,4 @@
-import { Line, Rect } from "react-konva";
+import { Ellipse, Line, Rect } from "react-konva";
 import type { WhiteboardElement } from "../../types";
 
 function RenderElement(element: WhiteboardElement) {
@@ -22,6 +22,17 @@ function RenderElement(element: WhiteboardElement) {
 				y={element.y}
 				width={element.width}
 				height={element.height}
+				stroke={element.color}
+				strokeWidth={element.strokeWidth}
+			/>
+
+		case "ellipse":
+			return <Ellipse
+				key={element.id}
+				x={element.x}
+				y={element.y}
+				radiusX={element.radiusX}
+				radiusY={element.radiusY}
 				stroke={element.color}
 				strokeWidth={element.strokeWidth}
 			/>

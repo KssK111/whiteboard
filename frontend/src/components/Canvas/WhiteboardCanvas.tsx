@@ -1,5 +1,5 @@
 import { Layer, Stage } from "react-konva";
-import type { Tool, WhiteboardElement, PenElement, BaseElement, RectElement } from "../../types";
+import type { Tool, WhiteboardElement, PenElement, BaseElement, RectElement, EllipseElement } from "../../types";
 import { useRef, useState } from "react";
 import type { KonvaEventObject } from "konva/lib/Node";
 import RenderElement from "./WBElementRenderer";
@@ -59,6 +59,18 @@ function WhiteboardCanvas(props: Props) {
 				element = rect_element
 				break;
 
+			case "ellipse":
+				const ellipse_element: EllipseElement = {
+					...element,
+					x: pos.x,
+					y: pos.y,
+					radiusX: 0,
+					radiusY: 0,
+				};
+				startPos.current = pos
+				element = ellipse_element
+				break
+
 			default:
 				throw new Error("Unimplemented");
 		}
@@ -95,6 +107,16 @@ function WhiteboardCanvas(props: Props) {
 					width: Math.abs(start.x - pos.x),
 					height: Math.abs(start.y - pos.y),
 				};
+				break
+
+			case "ellipse":
+				updatedElem = {
+					...currentElement,
+					x: (start.x + pos.x) / 2,
+					y: (start.y + pos.y) / 2,
+					radiusX: Math.abs(pos.x - start.x) / 2,
+					radiusY: Math.abs(pos.y - start.y) / 2,
+				}
 				break
 
 			default:
