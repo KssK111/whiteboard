@@ -143,6 +143,9 @@ function WhiteboardCanvas(props: Props) {
 			onMouseDown={handleMouseDown}
 			onMouseMove={handleMouseMove}
 			onMouseUp={handleMouseUp}
+			style={{
+				cursor: props.tool === "select" ? "default" : "crosshair"
+			}}
 		>
       <Layer>
 				{elements.map(RenderElement)}

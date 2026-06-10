@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import './App.css'
 import WhiteboardCanvas from "./components/Canvas/WhiteboardCanvas";
 import type { Tool } from "./types";
@@ -8,6 +8,35 @@ function App() {
 	const [tool, setTool] = useState<Tool>('pen')
 	const [color, setColor] = useState<string>("#000000")
 	const [strokeWidth, setStrokeWidth] = useState<number>(8)
+
+	useEffect(() => {
+	  const handler = (e: KeyboardEvent) => {
+		switch (e.key) {
+			case 's':
+				setTool("select")
+				break;
+			case 'p':
+				setTool("pen")
+				break;
+			case 'r':
+				setTool("rect")
+				break;
+			case 'e':
+				setTool("ellipse")
+				break;
+
+			default:
+				break;
+		}
+	  }
+
+	  window.addEventListener('keydown', handler)
+
+	  return () => {
+		window.removeEventListener('keydown', handler)
+	  }
+	}, [])
+
 
   return (
 		<div
