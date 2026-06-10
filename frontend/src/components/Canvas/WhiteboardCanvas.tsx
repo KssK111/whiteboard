@@ -47,7 +47,10 @@ function WhiteboardCanvas(props: Props) {
 					x: pos.x,
 					y: pos.y,
 					width: 0,
-					height: 0
+					height: 0,
+
+					startX: pos.x,
+					startY: pos.y
 				};
 				element = rect_element
 				break;
@@ -82,10 +85,10 @@ function WhiteboardCanvas(props: Props) {
 			case "rect":
 				updatedElem = {
 					...currentElement,
-					x: Math.min(currentElement.x, pos.x),
-					y: Math.min(currentElement.y, pos.y),
-					width: Math.abs(currentElement.x - pos.x),
-					height: Math.abs(currentElement.y - pos.y),
+					x: Math.min(currentElement.startX, pos.x),
+					y: Math.min(currentElement.startY, pos.y),
+					width: Math.abs(currentElement.startX - pos.x),
+					height: Math.abs(currentElement.startY - pos.y),
 				};
 				break
 

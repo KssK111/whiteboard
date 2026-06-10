@@ -9,6 +9,10 @@ function RenderElement(element: WhiteboardElement) {
 				points={element.points}
 				stroke={element.color}
 				strokeWidth={element.strokeWidth}
+
+				lineCap="round"
+				lineJoin="round"
+				tension={.3}
 			/>
 
 		case "rect":
