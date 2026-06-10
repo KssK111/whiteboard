@@ -1,7 +1,8 @@
 import { Layer, Line, Stage } from "react-konva";
-import type { Tool, WhiteboardElement, PenElement } from "../../types";
+import type { Tool, WhiteboardElement, PenElement, BaseElement, RectElement } from "../../types";
 import { useState } from "react";
 import type { KonvaEventObject } from "konva/lib/Node";
+import RenderElement from "./WBElementRenderer";
 
 interface Props {
   tool: Tool
@@ -21,18 +22,45 @@ function WhiteboardCanvas(props: Props) {
 		)
 		if (!pos) return
 
-		const pen_element: PenElement = {
+		const base_element: BaseElement = {
 			id: crypto.randomUUID(),
-			type: "pen",
 			color: props.color,
-			strokeWidth: props.strokeWidth,
-			points: [pos.x, pos.y]
+			strokeWidth: props.strokeWidth
 		};
-		setCurrentElement(pen_element)
+		let element: any = {
+			...base_element,
+			type: props.tool
+		}
+
+		switch (props.tool) {
+			case "pen":
+				const pen_element: PenElement = {
+					...element,
+					points: [pos.x, pos.y]
+				};
+				element = pen_element
+				break;
+
+			case "rect":
+				const rect_element: RectElement = {
+					...element,
+					x: pos.x,
+					y: pos.y,
+					width: 0,
+					height: 0
+				};
+				element = rect_element
+				break;
+
+			default:
+				throw new Error("Unimplemented");
+		}
+
+		setCurrentElement(element)
 	};
 
 	const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-		if (!currentElement || currentElement.type !== 'pen')
+		if (!currentElement)
 			return
 
 		const pos = (
@@ -42,15 +70,34 @@ function WhiteboardCanvas(props: Props) {
 		)
 		if (!pos) return
 
-		const updatedElem: PenElement = {
-			...currentElement,
-			points: [...currentElement.points, pos.x, pos.y]
-		};
+		let updatedElem: WhiteboardElement;
+		switch (currentElement.type) {
+			case "pen":
+				updatedElem = {
+					...currentElement,
+					points: [...currentElement.points, pos.x, pos.y]
+				}
+				break;
+
+			case "rect":
+				updatedElem = {
+					...currentElement,
+					x: Math.min(currentElement.x, pos.x),
+					y: Math.min(currentElement.y, pos.y),
+					width: Math.abs(currentElement.x - pos.x),
+					height: Math.abs(currentElement.y - pos.y),
+				};
+				break
+
+			default:
+				throw new Error("Unimplemented");
+		}
+
 		setCurrentElement(updatedElem)
 	};
 
 	const handleMouseUp = (e: KonvaEventObject<MouseEvent>) => {
-		if (!currentElement || currentElement.type !== 'pen')
+		if (!currentElement)
 			return
 
 		setElements([...elements, currentElement])
@@ -66,24 +113,9 @@ function WhiteboardCanvas(props: Props) {
 			onMouseUp={handleMouseUp}
 		>
       <Layer>
-				{elements
-					.filter((e) => e.type === "pen")
-					.map((e) => <Line
-						key={e.id}
-						points={e.points}
-						stroke={e.color}
-						strokeWidth={e.strokeWidth}
-					/>)
-				}
+				{elements.map(RenderElement)}
 
-				{currentElement?.type === 'pen' && (
-					<Line
-						key={currentElement.id}
-						points={currentElement.points}
-						stroke={currentElement.color}
-						strokeWidth={currentElement.strokeWidth}
-					/>
-				)}
+				{currentElement && RenderElement(currentElement)}
       </Layer>
     </Stage>
   );

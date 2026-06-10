@@ -1,7 +1,11 @@
-interface BaseElement {
+export interface BaseElement {
 	id: string
 	color: string
 	strokeWidth: number
+}
+
+export interface SelectElement extends BaseElement {
+	type: 'select'
 }
 
 export interface PenElement extends BaseElement {
@@ -26,4 +30,4 @@ export interface EllipseElement extends BaseElement {
 }
 
 export type Tool = 'select' | 'pen' | 'rect' | 'ellipse'
-export type WhiteboardElement = PenElement | RectElement | EllipseElement
+export type WhiteboardElement = SelectElement |PenElement | RectElement | EllipseElement
