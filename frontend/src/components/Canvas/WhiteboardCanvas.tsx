@@ -14,7 +14,7 @@ interface Props {
   color: string
   strokeWidth: number
   elements: WhiteboardElement[]
-  onElementAdded: (elements: WhiteboardElement[]) => void
+  onElementAdded: (element: WhiteboardElement) => void
 }
 
 function WhiteboardCanvas(props: Props) {
@@ -133,7 +133,7 @@ function WhiteboardCanvas(props: Props) {
 
 		startPos.current = null
 
-		props.onElementAdded([...props.elements, currentElement])
+		props.onElementAdded(currentElement)
 		setCurrentElement(null)
 	}
 

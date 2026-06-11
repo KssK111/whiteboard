@@ -38,7 +38,7 @@ function RenderElement(element: WhiteboardElement) {
 			/>
 
 		default:
-			throw new Error("Unimplemented");;
+			throw new Error("Unimplemented");
 	}
 }
 

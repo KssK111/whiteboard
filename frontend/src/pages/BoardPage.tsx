@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import WhiteboardCanvas from "../components/Canvas/WhiteboardCanvas";
-import type { Tool, WhiteboardElement } from "../types";
+import type { Message, Tool, WhiteboardElement } from "../types";
 import Toolbar from "../components/Toolbar/Toolbar";
 import { useParams } from "react-router-dom";
 
@@ -16,9 +16,21 @@ function BoardPage() {
 	const ws = useRef<WebSocket | null>(null)
 	useEffect(() => {
 		const socket = new WebSocket(`ws://localhost:3000/board/${roomId}`);
-		socket.onmessage = (event) => {
+		socket.onmessage = async (event) => {
 			console.log(event.data);
+
+			const text = await (event.data as Blob).text()
+			const message: Message = JSON.parse(text);
+			switch (message.type) {
+				case "element":
+					setElements(prev => [...prev, message.data])
+					break;
+
+				default:
+					throw new Error("Unimplemented");
+			}
 		}
+
 		ws.current = socket
 
 	  return () => {
@@ -89,7 +101,15 @@ function BoardPage() {
 				color={color}
 				strokeWidth={strokeWidth}
 				elements={elements}
-				onElementAdded={setElements}
+				onElementAdded={(e) => {
+					setElements([...elements, e])
+					const message: Message = {
+						type: "element",
+						data: e
+					}
+					console.log(message);
+					ws.current?.send(JSON.stringify(message))
+				}}
 			/>
 
 		</div>
