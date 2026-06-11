@@ -13,10 +13,11 @@ interface Props {
   tool: Tool
   color: string
   strokeWidth: number
+  elements: WhiteboardElement[]
+  onElementAdded: (elements: WhiteboardElement[]) => void
 }
 
 function WhiteboardCanvas(props: Props) {
-	const [elements, setElements] = useState<WhiteboardElement[]>([])
 	const [currentElement, setCurrentElement] = useState<WhiteboardElement | null>(null)
 	const startPos = useRef<Point | null>(null)
 
@@ -132,7 +133,7 @@ function WhiteboardCanvas(props: Props) {
 
 		startPos.current = null
 
-		setElements([...elements, currentElement])
+		props.onElementAdded([...props.elements, currentElement])
 		setCurrentElement(null)
 	}
 
@@ -148,7 +149,7 @@ function WhiteboardCanvas(props: Props) {
 			}}
 		>
       <Layer>
-				{elements.map(RenderElement)}
+				{props.elements.map(RenderElement)}
 
 				{currentElement && RenderElement(currentElement)}
       </Layer>
