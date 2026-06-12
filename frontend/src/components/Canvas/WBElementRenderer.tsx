@@ -5,7 +5,7 @@ function RenderElement(element: WhiteboardElement) {
 	switch (element.type) {
 		case "pen":
 			return <Line
-				key={element.id}
+				key={crypto.randomUUID()}
 				points={element.points}
 				stroke={element.color}
 				strokeWidth={element.strokeWidth}
@@ -17,7 +17,7 @@ function RenderElement(element: WhiteboardElement) {
 
 		case "rect":
 			return <Rect
-				key={element.id}
+				key={crypto.randomUUID()}
 				x={element.x}
 				y={element.y}
 				width={element.width}
@@ -28,7 +28,7 @@ function RenderElement(element: WhiteboardElement) {
 
 		case "ellipse":
 			return <Ellipse
-				key={element.id}
+				key={crypto.randomUUID()}
 				x={element.x}
 				y={element.y}
 				radiusX={element.radiusX}

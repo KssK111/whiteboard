@@ -11,13 +11,26 @@ interface BoardParams {
 	roomId: string
 }
 
+function randomColor(): string {
+  return `#${Math.floor(Math.random() * 0xffffff)
+    .toString(16)
+    .padStart(6, "0")}`;
+}
+
 fastify.register(async function (fastify) {
 	const rooms = new Map<string, Set<WebSocket>>();
 	fastify.get<{ Params: BoardParams }>(
 		'/board/:roomId',
 		{ websocket: true },
 		(socket: WebSocket, request: FastifyRequest<{ Params: BoardParams }>) => {
-
+			const initData = {
+				type: "init",
+				data: {
+					id: crypto.randomUUID(),
+					color: randomColor()
+				}
+			}
+			socket.send(JSON.stringify(initData))
 			const { roomId } = request.params;
 
 			fastify.log.info(`A user joined room ${roomId}`)

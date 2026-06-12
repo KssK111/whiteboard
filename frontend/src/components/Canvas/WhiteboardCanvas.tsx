@@ -1,8 +1,9 @@
 import { Layer, Stage } from "react-konva";
-import type { Tool, WhiteboardElement, PenElement, BaseElement, RectElement, EllipseElement } from "../../types";
+import type { Tool, WhiteboardElement, PenElement, BaseElement, RectElement, EllipseElement, Cursor } from "../../types";
 import { useRef, useState } from "react";
 import type { KonvaEventObject } from "konva/lib/Node";
 import RenderElement from "./WBElementRenderer";
+import RenderCursor from "./CursorRenderer";
 
 interface Point {
 	x: number
@@ -15,6 +16,8 @@ interface Props {
   strokeWidth: number
   elements: WhiteboardElement[]
   onElementAdded: (element: WhiteboardElement) => void
+  cursors: Map<`${string}-${string}-${string}-${string}-${string}`, Cursor>
+  onCursorMove: (x: number, y: number) => void
 }
 
 function WhiteboardCanvas(props: Props) {
@@ -30,7 +33,7 @@ function WhiteboardCanvas(props: Props) {
 		if (!pos) return
 
 		const base_element: BaseElement = {
-			id: crypto.randomUUID(),
+			//id: crypto.randomUUID(),
 			color: props.color,
 			strokeWidth: props.strokeWidth
 		};
@@ -90,6 +93,8 @@ function WhiteboardCanvas(props: Props) {
 			?.getPointerPosition()
 		)
 		if (!pos) return
+		props.onCursorMove(pos.x, pos.y)
+		console.log(`position: x=${pos.x} y=${pos.y}`);
 
 		let updatedElem: WhiteboardElement;
 		switch (currentElement.type) {
@@ -152,6 +157,8 @@ function WhiteboardCanvas(props: Props) {
 				{props.elements.map(RenderElement)}
 
 				{currentElement && RenderElement(currentElement)}
+
+				{[...props.cursors.values()].map(RenderCursor)}
       </Layer>
     </Stage>
   );

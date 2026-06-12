@@ -1,5 +1,5 @@
 export interface BaseElement {
-	id: string
+	//id: string
 	color: string
 	strokeWidth: number
 }
@@ -30,4 +30,4 @@ export interface EllipseElement extends BaseElement {
 }
 
 export type Tool = 'select' | 'pen' | 'rect' | 'ellipse'
-export type WhiteboardElement = SelectElement |PenElement | RectElement | EllipseElement
+export type WhiteboardElement = SelectElement | PenElement | RectElement | EllipseElement
