@@ -83,10 +83,6 @@ function WhiteboardCanvas(props: Props) {
 	};
 
 	const handleMouseMove = (e: KonvaEventObject<MouseEvent>) => {
-		if (!currentElement)
-			return
-		const start = startPos.current!;
-
 		const pos = (
 			e.target
 			.getStage()
@@ -95,6 +91,10 @@ function WhiteboardCanvas(props: Props) {
 		if (!pos) return
 		props.onCursorMove(pos.x, pos.y)
 		console.log(`position: x=${pos.x} y=${pos.y}`);
+
+		if (!currentElement)
+			return
+		const start = startPos.current!;
 
 		let updatedElem: WhiteboardElement;
 		switch (currentElement.type) {
